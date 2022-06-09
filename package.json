@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev" : "PORT=3069 LOG_FILE='spire-inventory.log' node index.js"
+    "dev" : "PORT=3069 DO_LOGGING='true' LOG_FILE='spire-inventory.log' node index.js"
   },
   "author": "John L. Carveth <johnc@roneymk.com>",
   "license": "ISC",

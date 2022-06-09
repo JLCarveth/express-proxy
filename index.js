@@ -18,6 +18,8 @@ const filepath = (process.env.LOG_FILE !== undefined) ? process.env.LOG_FILE : '
 var myLimit = typeof (process.argv[2]) != 'undefined' ? process.argv[2] : '100kb';
 console.log('Using limit: ', myLimit);
 
+if (LOGGING) console.log("Logging enabled, logfile: " + filepath);
+
 function log(message) {
     fs.appendFile(filepath, message, {
         'flag' : 'a+'
