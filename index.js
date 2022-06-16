@@ -16,12 +16,12 @@ dotenv.config();
 
 const LOGGING = (process.env.DO_LOGGING === 'true') ? true : false;
 
-import logger from './log.js';
+import logger from 'log.js';
 const Logger = new logger();
 const app = express();
 
 var myLimit = typeof (process.env.LIMIT) != 'undefined' ? process.env.LIMIT : '250kb';
-console.log('Using limit: ', myLimit);
+Logger.log({'message': 'Using limit: ' + myLimit});
 app.use(bodyParser.json({ limit: myLimit }));
 
 app.all('*', function (req, res) {
@@ -73,5 +73,5 @@ app.all('*', function (req, res) {
 app.use(express.urlencoded({ extended: false }));
 app.set('port', process.env.PORT || 3069);
 app.listen(app.get('port'), function () {
-    console.log('Proxy server listening on port ' + app.get('port'));
+    Logger.log({'message' : 'Proxy server listening on port ' + app.get('port')});
 });

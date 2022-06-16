@@ -1,6 +1,6 @@
 {
   "name": "express-proxy",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "",
   "type": "module",
   "main": "index.js",
@@ -11,6 +11,7 @@
   "author": "John L. Carveth <johnc@roneymk.com>",
   "license": "ISC",
   "dependencies": {
+    "@jlcarveth/log.js": "^0.5.2",
     "body-parser": "^1.20.0",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
