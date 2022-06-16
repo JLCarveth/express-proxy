@@ -9,19 +9,19 @@
 import express from 'express';
 import request from 'request'
 import bodyParser from 'body-parser';
-import {performance} from 'perf_hooks';
+import { performance } from 'perf_hooks';
 
 import dotenv from 'dotenv';
 dotenv.config();
 
 const LOGGING = (process.env.DO_LOGGING === 'true') ? true : false;
 
-import logger from 'log.js';
+import logger from '@jlcarveth/log.js';
 const Logger = new logger();
 const app = express();
 
 var myLimit = typeof (process.env.LIMIT) != 'undefined' ? process.env.LIMIT : '250kb';
-Logger.log({'message': 'Using limit: ' + myLimit});
+Logger.log({ 'message': 'Using limit: ' + myLimit });
 app.use(bodyParser.json({ limit: myLimit }));
 
 app.all('*', function (req, res) {
@@ -42,13 +42,13 @@ app.all('*', function (req, res) {
         if (LOGGING) {
             let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
             let data = {
-                "clientAddress" : ip,
-                "targetURL" : targetURL,
-                "method" : req.method,
+                "clientAddress": ip,
+                "targetURL": targetURL,
+                "method": req.method,
                 "body": req.body,
-                "headers" : req.headers
+                "headers": req.headers
             };
-            Logger.log({'message' : 'Inbound request'}, data);
+            Logger.log({ 'message': 'Inbound request' }, data);
         }
 
         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') } },
@@ -59,12 +59,12 @@ app.all('*', function (req, res) {
                 if (LOGGING) {
                     const t1 = performance.now();
                     let data = {
-                        "statusCode" : response.statusCode,
-                        "elapsedTime" : (t1 - t0).toFixed(2) + 'ms',
-                        "response" : response.body
+                        "statusCode": response.statusCode,
+                        "elapsedTime": (t1 - t0).toFixed(2) + 'ms',
+                        "response": response.body
                     };
-                    
-                    Logger.log({'message' : 'Inbound response.'}, data);
+
+                    Logger.log({ 'message': 'Inbound response.' }, data);
                 }
             }).pipe(res);
     }
@@ -73,5 +73,5 @@ app.all('*', function (req, res) {
 app.use(express.urlencoded({ extended: false }));
 app.set('port', process.env.PORT || 3069);
 app.listen(app.get('port'), function () {
-    Logger.log({'message' : 'Proxy server listening on port ' + app.get('port')});
+    Logger.log({ 'message': 'Proxy server listening on port ' + app.get('port') });
 });
