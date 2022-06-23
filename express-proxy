@@ -1,0 +1,27 @@
+#!/bin/sh
+# ==============================================================================
+# Author: John L. Carveth <johnc@roneymk.com>
+# Subsystem file for express-proxy
+# This file must be placed in /etc/init.d
+# ==============================================================================
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+export NODE_PATH=$NODE_PATH:/home/jlcarveth/.nvm/versions/node/v18.2.0/lib/node_modules
+export NPM_PATH=$NPM_PATH:/home/jlcarveth/.nvm/versions/node/v18.2.0/bin/npm
+export INSTALL_DIR=/opt/express-proxy
+
+PROXY_LOG=/var/log/express-proxy/proxy.log
+ERROR_LOG=/var/log/express-proxy/error.log
+
+case "$1" in
+	start)
+    cd $INSTALL_DIR
+    exec npm install --save &
+	exec npm run dev 1>>$PROXY_LOG 2>>$ERROR_LOG &
+	;;
+
+	stop)
+	echo "Received shutdown signal from init.d. Exiting." >> $PROXY_LOG
+	kill $(ps aux | grep 'eproxy' | awk '{print $2}')
+	;;
+esac
+exit 0

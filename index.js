@@ -20,6 +20,8 @@ import logger from '@jlcarveth/log.js';
 const Logger = new logger();
 const app = express();
 
+process.title = 'eproxy'
+
 var myLimit = typeof (process.env.LIMIT) != 'undefined' ? process.env.LIMIT : '250kb';
 Logger.log('Using limit: ' + myLimit);
 app.use(bodyParser.json({ limit: myLimit }));
