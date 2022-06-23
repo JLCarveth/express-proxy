@@ -21,7 +21,7 @@ const Logger = new logger();
 const app = express();
 
 var myLimit = typeof (process.env.LIMIT) != 'undefined' ? process.env.LIMIT : '250kb';
-Logger.log({ 'message': 'Using limit: ' + myLimit });
+Logger.log('Using limit: ' + myLimit);
 app.use(bodyParser.json({ limit: myLimit }));
 
 app.all('*', function (req, res) {
@@ -48,7 +48,7 @@ app.all('*', function (req, res) {
                 "body": req.body,
                 "headers": req.headers
             };
-            Logger.log({ 'message': 'Inbound request' }, data);
+            Logger.log('Inbound request', data);
         }
 
         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') } },
@@ -64,7 +64,7 @@ app.all('*', function (req, res) {
                         "response": response.body
                     };
 
-                    Logger.log({ 'message': 'Inbound response.' }, data);
+                    Logger.log('Inbound response.', data);
                 }
             }).pipe(res);
     }
@@ -73,5 +73,5 @@ app.all('*', function (req, res) {
 app.use(express.urlencoded({ extended: false }));
 app.set('port', process.env.PORT || 3069);
 app.listen(app.get('port'), function () {
-    Logger.log({ 'message': 'Proxy server listening on port ' + app.get('port') });
+    Logger.log('Proxy server listening on port ' + app.get('port'));
 });
