@@ -1,27 +1,40 @@
-#!/bin/sh
+#!/bin/bash
 # ==============================================================================
 # Author: John L. Carveth <johnc@roneymk.com>
 # Subsystem file for express-proxy
 # This file must be placed in /etc/init.d
 # ==============================================================================
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
-export NODE_PATH=$NODE_PATH:/home/jlcarveth/.nvm/versions/node/v18.2.0/lib/node_modules
-export NPM_PATH=$NPM_PATH:/home/jlcarveth/.nvm/versions/node/v18.2.0/bin/npm
-export INSTALL_DIR=/opt/express-proxy
-
+INSTALL_DIR=/opt/express-proxy
+# PROXY_LOG and ERROR_LOG 
 PROXY_LOG=/var/log/express-proxy/proxy.log
 ERROR_LOG=/var/log/express-proxy/error.log
+PNAME=eproxy
+#Color defns for pretty output
+RESET="$(tput sgr0)"
+RED_BG="$(tput setab 196)"
+GRN_BG="$(tput setab 34)"
 
 case "$1" in
 	start)
     cd $INSTALL_DIR
-    exec npm install --save 1>> $PROXY_LOG 2>> $ERROR_LOG &
+	# We don't need output from npm install *unless* something goes wrong
+    exec npm install --save 1>> /dev/null 2>> $ERROR_LOG & # amp.- run in bg.
 	exec npm run dev 1>> $PROXY_LOG 2>> $ERROR_LOG &
 	;;
 
 	stop)
 	echo "Received shutdown signal from init.d. Exiting." >> $PROXY_LOG
-	kill $(ps aux | grep 'eproxy' | grep -v grep | awk '{print $2}') || echo "Error killing eproxy" >> $ERROR_LOG
+	pkill $PNAME >/dev/null || echo "Error killing eproxy" >> $ERROR_LOG
+	;;
+
+	status)
+	pgrep -x $PNAME >/dev/null && RUNNING=0 || RUNNING=1
+	if [[ "$RUNNING" -eq 0 ]] ; then
+		printf "%s%s%s%s\n" "Status: " $GRN_BG "RUNNING" $RESET
+	else
+		printf "%s%s%s%s\n" "Status: " $RED_BG "STOPPED" $RESET
+	fi
 	;;
 esac
 exit 0
