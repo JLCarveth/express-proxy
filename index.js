@@ -56,7 +56,7 @@ app.all('*', function (req, res) {
         request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') } },
             function (error, response) {
                 if (error) {
-                    console.error('error: ' + response.statusCode)
+                    console.error("Error: " + JSON.stringify(error, Object.getOwnPropertyNames(error)))
                 }
                 if (LOGGING) {
                     const t1 = performance.now();
