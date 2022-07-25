@@ -28,7 +28,7 @@ app.use(bodyParser.json({ limit: myLimit }));
 
 app.all('*', function (req, res) {
     const t0 = performance.now();
-    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Origin', req.get('Origin'));
     res.header('Access-Control-Allow-Methods', 'GET, PUT, PATCH, POST, DELETE');
     res.header('Access-Control-Allow-Headers', req.header('access-control-request-headers'));
     if (req.method === 'OPTIONS') {
