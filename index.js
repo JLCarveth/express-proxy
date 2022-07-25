@@ -58,15 +58,19 @@ app.all('*', function (req, res) {
                 if (error) {
                     console.error("Error: " + JSON.stringify(error, Object.getOwnPropertyNames(error)))
                 }
-                if (LOGGING) {
-                    const t1 = performance.now();
-                    let data = {
-                        "statusCode": response.statusCode,
-                        "elapsedTime": (t1 - t0).toFixed(2) + 'ms',
-                        "response": response.body
-                    };
-
-                    Logger.log('Inbound response.', data);
+                if (!error && response.statusCode == 200) {
+                    if (LOGGING) {
+                        const t1 = performance.now();
+                        let data = {
+                            "statusCode": response.statusCode,
+                            "elapsedTime": (t1 - t0).toFixed(2) + 'ms',
+                            "response": response.body
+                        };
+    
+                        Logger.log('Inbound response.', data);
+                    }
+                } else {
+                    console.error("StatusCode : " + JSON.stringify(response))
                 }
             }).pipe(res);
     }
