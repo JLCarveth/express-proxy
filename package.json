@@ -11,6 +11,7 @@
   "author": "John L. Carveth <johnc@roneymk.com>",
   "license": "ISC",
   "dependencies": {
+    "@jlcarveth/auth.js": "^1.0.1",
     "@jlcarveth/log.js": "^1.0.3",
     "body-parser": "^1.20.0",
     "dotenv": "^16.0.1",
