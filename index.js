@@ -10,11 +10,16 @@ import express from 'express';
 import request from 'request'
 import bodyParser from 'body-parser';
 import { performance } from 'perf_hooks';
-
+import { verifyToken } from '@jlcarveth/auth.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
 const LOGGING = (process.env.DO_LOGGING === 'true') ? true : false;
+
+const SPIRE_USER = process.env.SPIRE_USER;
+const SPIRE_PASS = process.env.SPIRE_PASS;
+
+let headers = new Headers();
 
 import logger from '@jlcarveth/log.js';
 const Logger = new logger();
@@ -40,6 +45,25 @@ app.all('*', function (req, res) {
             res.send(500, { error: 'There is no Target-URL header in the request' });
             return;
         }
+        /* If TargetURL contains roneysvr, check for an access token */
+        if (targetURL.includes('roneysvr:10880')) {
+            // Check for and verify a token
+            const token = req.headers['x-access-token'];
+            if (!token) {
+                res.status(401).json({
+                    'success' : false,
+                    'message' : 'Missing token.'
+                });
+            }
+            try {
+                verifyToken(token);
+                /* Token is valid, so append authorization header */
+                headers.append("Authorization", "Basic " + Buffer.from(SPIRE_USER + ":" + SPIRE_PASS).toString('base64')); 
+            } catch (err) {
+                res.status(500).json({ 'success' : false, 'message' : err.message });
+                return;
+            }
+        }
         /* Log incoming request */
         if (LOGGING) {
             let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -53,7 +77,7 @@ app.all('*', function (req, res) {
             Logger.log('Inbound request', data);
         }
 
-        request({ url: targetURL, method: req.method, json: req.body, headers: { 'Authorization': req.header('Authorization') } },
+        request({ url: targetURL, method: req.method, json: req.body, headers: headers },
             function (error, response) {
                 if (error) {
                     console.error("Error: " + JSON.stringify(error, Object.getOwnPropertyNames(error)))
